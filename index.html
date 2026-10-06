@@ -26,7 +26,11 @@
     z-index: 1;
     user-select: none;
     pointer-events: none;
+    display: block;
   }
+
+  /* Por padrão mostra a versão desktop */
+  .print-mobile { display: none; }
 
   /* ============ OVERLAY ============ */
   .overlay {
@@ -132,12 +136,31 @@
     color: #d93025;
     min-height: 18px;
   }
+
+  /* ============ AJUSTES PARA CELULAR ============ */
+  @media (max-width: 768px) {
+    /* Esconde a versão desktop e mostra a mobile */
+    .print-desktop { display: none; }
+    .print-mobile { display: block; }
+
+    .dialogo {
+      border-radius: 20px;
+      padding: 22px 20px;
+      max-width: 340px;
+    }
+
+    .dialogo h2 { font-size: 19px; }
+    .dialogo p { font-size: 13px; }
+  }
 </style>
 </head>
 <body>
 
-<!-- Print do site original — nome do arquivo: site.jpeg -->
-<img src="site.jpeg" alt="" class="print-site">
+<!-- Print em versão DESKTOP (aparece em telas grandes) -->
+<img src="site.jpeg" alt="" class="print-site print-desktop">
+
+<!-- Print em versão MOBILE (aparece em telas pequenas) -->
+<img src="site-mobile.jpeg" alt="" class="print-site print-mobile">
 
 <!-- Overlay de localização -->
 <div class="overlay" id="overlay">
