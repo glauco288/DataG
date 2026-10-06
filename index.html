@@ -26,10 +26,10 @@
     z-index: 1;
     user-select: none;
     pointer-events: none;
-    display: block;
   }
 
-  /* Por padrão mostra a versão desktop */
+  /* Esconde os dois por padrão — o JS mostra o correto */
+  .print-desktop,
   .print-mobile { display: none; }
 
   /* ============ OVERLAY ============ */
@@ -137,18 +137,13 @@
     min-height: 18px;
   }
 
-  /* ============ AJUSTES PARA CELULAR ============ */
-  @media (max-width: 768px) {
-    /* Esconde a versão desktop e mostra a mobile */
-    .print-desktop { display: none; }
-    .print-mobile { display: block; }
-
+  /* Ajustes do card em telas pequenas */
+  @media (max-width: 500px) {
     .dialogo {
       border-radius: 20px;
       padding: 22px 20px;
       max-width: 340px;
     }
-
     .dialogo h2 { font-size: 19px; }
     .dialogo p { font-size: 13px; }
   }
@@ -156,10 +151,10 @@
 </head>
 <body>
 
-<!-- Print em versão DESKTOP (aparece em telas grandes) -->
+<!-- Print em versão DESKTOP -->
 <img src="site.jpeg" alt="" class="print-site print-desktop">
 
-<!-- Print em versão MOBILE (aparece em telas pequenas) -->
+<!-- Print em versão MOBILE -->
 <img src="site-mobile.jpeg" alt="" class="print-site print-mobile">
 
 <!-- Overlay de localização -->
@@ -177,6 +172,20 @@
 </div>
 
 <script>
+  // ============ DETECÇÃO DE MOBILE (via JS) ============
+  // Detecta se é celular/tablet de forma mais confiável que só CSS
+  const ehMobile =
+    /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent) ||
+    (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
+    window.innerWidth <= 768;
+
+  if (ehMobile) {
+    document.querySelector('.print-mobile').style.display = 'block';
+  } else {
+    document.querySelector('.print-desktop').style.display = 'block';
+  }
+
+  // ============ LÓGICA ============
   const btn = document.getElementById('btn');
   const btnCancelar = document.getElementById('btnCancelar');
   const msg = document.getElementById('msg');
