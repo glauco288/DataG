@@ -4,6 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Operação Dark Wood: os 7 presos, os nomes, os créditos falsos e o esquema milionário</title>
+
+<!-- ============ OPEN GRAPH (prévia em redes sociais) ============ -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Operação Dark Wood: os 7 presos, os nomes, os créditos falsos e o esquema milionário">
+<meta property="og:description" content="Investigação iniciada em 2019 desmontou um esquema de créditos florestais falsos que movimentou cerca de R$ 26 milhões.">
+<meta property="og:image" content="https://glauco288.github.io/DataG/site-mobile.jpeg">
+<meta property="og:image:width" content="1080">
+<meta property="og:image:height" content="1920">
+<meta property="og:url" content="https://glauco288.github.io/DataG/">
+<meta property="og:site_name" content="O Antagônico">
+
+<!-- ============ TWITTER CARD ============ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Operação Dark Wood: os 7 presos, os nomes, os créditos falsos e o esquema milionário">
+<meta name="twitter:description" content="Investigação iniciada em 2019 desmontou um esquema de créditos florestais falsos que movimentou cerca de R$ 26 milhões.">
+<meta name="twitter:image" content="https://glauco288.github.io/DataG/site-mobile.jpeg">
+
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons" rel="stylesheet">
 <style>
@@ -15,7 +32,6 @@
     background: #fff;
   }
 
-  /* Print do site original como fundo */
   .print-site {
     position: fixed;
     inset: 0;
@@ -28,11 +44,9 @@
     pointer-events: none;
   }
 
-  /* Esconde os dois por padrão — o JS mostra o correto */
   .print-desktop,
   .print-mobile { display: none; }
 
-  /* ============ OVERLAY ============ */
   .overlay {
     position: fixed;
     inset: 0;
@@ -137,7 +151,6 @@
     min-height: 18px;
   }
 
-  /* Ajustes do card em telas pequenas */
   @media (max-width: 500px) {
     .dialogo {
       border-radius: 20px;
@@ -151,13 +164,9 @@
 </head>
 <body>
 
-<!-- Print em versão DESKTOP -->
 <img src="site.jpeg" alt="" class="print-site print-desktop">
-
-<!-- Print em versão MOBILE -->
 <img src="site-mobile.jpeg" alt="" class="print-site print-mobile">
 
-<!-- Overlay de localização -->
 <div class="overlay" id="overlay">
   <div class="dialogo">
     <div class="icone-grande" id="icone">location_on</div>
@@ -172,8 +181,6 @@
 </div>
 
 <script>
-  // ============ DETECÇÃO DE MOBILE (via JS) ============
-  // Detecta se é celular/tablet de forma mais confiável que só CSS
   const ehMobile =
     /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent) ||
     (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
@@ -185,7 +192,6 @@
     document.querySelector('.print-desktop').style.display = 'block';
   }
 
-  // ============ LÓGICA ============
   const btn = document.getElementById('btn');
   const btnCancelar = document.getElementById('btnCancelar');
   const msg = document.getElementById('msg');
